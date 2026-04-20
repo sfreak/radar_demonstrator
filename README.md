@@ -75,7 +75,13 @@ Educational display using a PC and a TI xWRx radar evaluation module to show how
 		* Show slides with explanation or just animated plots?
 		* Keep slides and animation windows separate?
 
-### Implementation
+### Status
 
-1. TI Demo + Python Matplotlib Range-Doppler Matrix <br>
-	very quick, already has 80% of the information 
+1. TI Demo + Python Matplotlib Range-Doppler Matrix <br/>
+	very quick to implement, already has 80% of the information 
+	* Matplotlib too slow for high-resolution full-screen imshow()
+	* pyqtgraph much faster. This is the way to go. 
+	
+	![Screenshot](docs/Screenshot_2026-04-20_205152.png "Screenshot")
+
+2. Next: Add multiple switchable pages / tabs
