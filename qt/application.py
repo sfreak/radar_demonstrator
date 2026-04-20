@@ -74,14 +74,20 @@ class CustomWidget(QtWidgets.QWidget):
         self.ui.plotWidget.setLabel('bottom', 'Doppler Gate')
         
 
+        self.img = pg.ImageItem(
+            image=np.zeros((128, 64)),
+            levels=(40,100)
+        )
         
-        self.ui.imageWidget.setColorMap(pg.colormap.get('viridis'))
-        self.ui.imageWidget.setLevels(40, 100)
-        self.ui.imageWidget.ui.histogram.hide()
-        self.ui.imageWidget.ui.roiBtn.hide()
-        self.ui.imageWidget.ui.menuBtn.hide()        
-        self.ui.imageWidget.view.setLabel('bottom', 'Range Gate')
-        self.ui.imageWidget.view.setLabel('left', 'Doppler Gate')
+        tr = QtGui.QTransform()
+        tr.translate(0, -32) # move DG32 to 0
+        self.img.setTransform(tr) # assign transform
+
+        self.ui.imageWidget.setRange(yRange=(-32, 32), xRange=(0,127), padding=0)
+        self.ui.imageWidget.addItem(self.img)
+        self.img.setColorMap(pg.colormap.get('viridis'))
+        self.ui.imageWidget.setLabel('bottom', 'Range Gate')
+        self.ui.imageWidget.setLabel('left', 'Doppler Gate')
 
         # simple demonstration of pure Qt widgets interacting with pyqtgraph
         self.ui.checkBox.stateChanged.connect(self.toggleMouse)
@@ -113,7 +119,7 @@ class CustomWidget(QtWidgets.QWidget):
     def newRDM(self, rdm:np.ndarray):
         #print('got RDM')
         imdata = np.fft.fftshift(rdm, axes=1)
-        self.ui.imageWidget.setImage(imdata)
+        self.img.setImage(imdata)
 
         #self.trace0.setData(np.max(rdm, axis=1))
         self.trace0.setData(rdm[:, 0]) # stationary

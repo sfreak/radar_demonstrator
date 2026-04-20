@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
+from pyqtgraph import ImageView, PlotWidget
 
 class Ui_CustomWidget(object):
     def setupUi(self, CustomWidget):
@@ -24,7 +25,7 @@ class Ui_CustomWidget(object):
         self.checkBox.setChecked(True)
         self.checkBox.setObjectName("checkBox")
         self.gridLayout.addWidget(self.checkBox, 2, 0, 1, 1)
-        self.imageWidget = ImageView(CustomWidget, view=pg.PlotItem())
+        self.imageWidget = PlotWidget(CustomWidget)
         self.imageWidget.setObjectName("imageWidget")
         self.gridLayout.addWidget(self.imageWidget, 1, 0, 1, 1)
 
@@ -35,4 +36,4 @@ class Ui_CustomWidget(object):
         _translate = QtCore.QCoreApplication.translate
         CustomWidget.setWindowTitle(_translate("CustomWidget", "Form"))
         self.checkBox.setText(_translate("CustomWidget", "Mouse Enabled"))
-from pyqtgraph import ImageView, PlotWidget
+
