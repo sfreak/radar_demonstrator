@@ -182,7 +182,34 @@ class Radar:
 
             tlv_data = data[i+tlv_headersize:i+tlv_headersize+tlv_len]
 
-            if tlv_tag == 2:
+            if tlv_tag == 1:
+                # MMWDEMO_OUTPUT_MSG_DETECTED_POINTS
+
+                tgt_header = tlv_data[:4]
+                tgt_body = tlv_data[4:]
+                n_obj, qformat = struct.unpack('<HH', tgt_header)
+                self.logger.info('DETECTED_POINTS: %d %d', n_obj, qformat)
+                offs = 0
+                targets = []
+                for tgt in range(n_obj):
+                    rg, dg, pk, x, y, z = struct.unpack('<HhHhhh', tgt_body[offs:offs+12])
+                    x = x / 2**qformat
+                    y = y / 2**qformat
+                    z = z / 2**qformat
+                    self.logger.info('tgt %02d: % 4d % 4d % 6d %7.3f %7.3f %7.3f', tgt, rg, dg, pk, x, y, z)
+                    offs += 12
+                    target = {
+                        'rg': rg,
+                        'dg': dg,
+                        'peakval': pk,
+                        'x': x,
+                        'y': y,
+                        'z': z,
+                    }
+                    targets.append(target)
+                results.targets = targets
+
+            elif tlv_tag == 2:
                 # range profile
                 rangedata = np.frombuffer(tlv_data, dtype='<u2').astype(float)
                 # data format lof log2, Q8

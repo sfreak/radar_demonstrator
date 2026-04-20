@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 from PyQt5 import QtGui, QtCore, QtWidgets 
 import pyqtgraph as pg
@@ -8,11 +9,15 @@ from template import Ui_CustomWidget
 
 g_mode = 'RDM'
 
+logging.basicConfig(level=logging.DEBUG, filename='debug.log', filemode='w')
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
+logging.getLogger('PIL').setLevel(logging.WARNING)
 
 class RadarWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
     newRangeProfile = QtCore.pyqtSignal(np.ndarray, np.ndarray)
     newRDM = QtCore.pyqtSignal(np.ndarray)
+    newTargets = QtCore.pyqtSignal(list)
     
     def run(self):
         self.please_stop = False
@@ -36,6 +41,10 @@ class RadarWorker(QtCore.QObject):
             if hasattr(results, 'range_doppler_heatmap'):
                 if (not self.please_stop):
                     self.newRDM.emit(results.range_doppler_heatmap)
+
+            if hasattr(results, 'targets'):
+                if (not self.please_stop):
+                    self.newTargets.emit(results.targets)
 
         if not self.please_stop:
             self.finished.emit()
@@ -89,6 +98,10 @@ class CustomWidget(QtWidgets.QWidget):
         self.ui.imageWidget.setLabel('bottom', 'Range Gate')
         self.ui.imageWidget.setLabel('left', 'Doppler Gate')
 
+        self.sc = pg.ScatterPlotItem(x=[], y=[])
+        self.ui.imageWidget.addItem(self.sc)
+
+
         # simple demonstration of pure Qt widgets interacting with pyqtgraph
         self.ui.checkBox.stateChanged.connect(self.toggleMouse)
 
@@ -105,6 +118,7 @@ class CustomWidget(QtWidgets.QWidget):
         
         self.worker.newRDM.connect(self.newRDM)
         self.worker.newRangeProfile.connect(self.newRangeProfile)
+        self.worker.newTargets.connect(self.newTargets)
 
         self.aboutToQuit.connect(self.worker.stop)
         self.thread.start()
@@ -126,6 +140,15 @@ class CustomWidget(QtWidgets.QWidget):
         #self.trace1.setData(np.max(rdm[3:58], axis=1)) # moving - does not work well as the doppler window smears targets
 
         # TODO: add background subtraction
+
+    def newTargets(self, targets:list[dict]):
+        #x = [t.get('x') for t in targets]
+        #y = [t.get('y') for t in targets]
+        x = [t.get('rg') for t in targets]
+        y = [t.get('dg') for t in targets]
+        self.sc.setData(x=x, y=y)
+        # TODO: add persistence
+        # TODO: move to separate plot
 
     def toggleMouse(self, state):
         if state == QtCore.Qt.Checked:
