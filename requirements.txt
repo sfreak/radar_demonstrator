@@ -1,4 +1,7 @@
 numpy
 matplotlib
 pyserial
+PyQt5
+PyQt5Designer
+pyqtgraph
 -e .

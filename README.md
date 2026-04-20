@@ -70,7 +70,10 @@ Educational display using a PC and a TI xWRx radar evaluation module to show how
 	* GUI: 
 	    * PyQT? 
 		* Just plain Matplotlib? 
+		* Jupyter slides? Can those have real-time animated plots?
+		* Webapp? Could render the plots to png and server via HTTP, have a client load and display them in a loop (JS). Could potentially embed into some kind of HTML slideshow as a movie player of sorts?
 		* Show slides with explanation or just animated plots?
+		* Keep slides and animation windows separate?
 
 ### Implementation
 

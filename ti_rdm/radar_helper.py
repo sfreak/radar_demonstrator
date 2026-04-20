@@ -5,6 +5,7 @@ import os
 import logging
 import queue
 import threading
+import time
 
 
 class RadarTransmissionError(Exception):
@@ -40,7 +41,7 @@ class Radar:
         self.ser_ctrl = serial.Serial(port=com_ctrl, baudrate=115200, timeout=0.1)
 
         if reset:
-            os.system(r'C:\ti\ccsv7\ccs_base\common\uscif\xds110\xds110reset.exe')
+            os.system(r'C:\ti\ccs1271\ccs\ccs_base\common\uscif\xds110\xds110reset.exe')
 
         if send_config:
             self._send_config(waveform_config)
@@ -70,9 +71,12 @@ class Radar:
         print(response.decode(), end='')
         for l in config:
             line = l.strip()
-            if b'%' in line: continue
+            if line.startswith(b'%'): continue
             self.ser_ctrl.write(line + b'\n')
-            response = self.ser_ctrl.read(1024)
+            echo = self.ser_ctrl.readline()
+            response = self.ser_ctrl.readline()
+            time.sleep(0.001)
+            print(echo.decode(), end='')
             print(response.decode(), end='')
             if b'Done' not in response:
                 raise Exception('Radar sensor reported error:' + response.decode())
