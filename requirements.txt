@@ -2,6 +2,7 @@ numpy
 matplotlib
 pyserial
 PyQt5
-PyQt5Designer
+#PyQt5Designer
+qt5-applications
 pyqtgraph
 -e .
