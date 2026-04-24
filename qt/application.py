@@ -7,8 +7,6 @@ from ti_rdm.radar_helper import Radar, RadarResults, RadarTransmissionError
 # import the "form class" from your compiled UI
 from template import Ui_CustomWidget
 
-g_mode = 'RDM'
-
 logging.basicConfig(level=logging.DEBUG, filename='debug.log', filemode='w')
 logging.getLogger('matplotlib').setLevel(logging.WARNING)
 logging.getLogger('PIL').setLevel(logging.WARNING)
@@ -25,7 +23,6 @@ class RadarWorker(QtCore.QObject):
         radar = Radar(
             com_ctrl='/dev/ttyACM0',  # XDS110 Class Application/User UART
             com_data='/dev/ttyACM1',  # XDS110 Class Auxiliary Data Port
-            #waveform_config='ti_rdm/profile_range.cfg'
             waveform_config='ti_rdm/profile_range_doppler.cfg'
         )
         print('Radar module initialized.')
@@ -126,6 +123,7 @@ class CustomWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(CustomWidget, self).__init__(parent=parent)
 
+        # make all plots transparent
         pg.setConfigOption('background', (255,255,255, 0))
 
         # set up the form class as a `ui` attribute
@@ -136,14 +134,8 @@ class CustomWidget(QtWidgets.QWidget):
 
         # Range profile plot
         self.trace0 = self.ui.plotWidget.plot(
-            x=[0.0, 1.0, 2.0, 3.0],
-            y=[4.4, 2.5, 2.1, 2.2],
+            x=[], y=[],
             pen=pg.mkPen('black', width=3),
-            symbol='o')
-        self.trace1 = self.ui.plotWidget.plot(
-            x=[0.0, 1.0, 2.0, 3.0],
-            y=[4.4, 2.5, 2.1, 2.2],
-            pen=pg.mkPen('green', width=3),
             symbol='o')
         self.ui.plotWidget.setYRange(30, 110)
         self.ui.plotWidget.setLabel('left', 'Received Power')
@@ -190,9 +182,8 @@ class CustomWidget(QtWidgets.QWidget):
         # highscore
         self.speed_template = '<span style="color: red; font-size: 16pt;">Highest speed: {}</span>'
         self.speed_text = pg.TextItem(html=self.speed_template.format(0))
+        self.speed_text.setPos(40,26) # position in data coordinates (i.e., time and speed)
         self.ui.speedWidget.addItem(self.speed_text)
-        self.speed_text.setPos(30,20)
-
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
@@ -216,26 +207,22 @@ class CustomWidget(QtWidgets.QWidget):
         # update persistent point cloud
         self.pointcloud.update()
         spots = self.pointcloud.getSpots()
-        logging.info('%d spots', len(spots))
         self.sc_points.setData(spots=spots)
 
     def newRangeProfile(self, pr:np.ndarray, pn:np.ndarray):
         #print('got radar data: ', pr)
         # ramge profile is just Doppler zero - moving targets will not show up
         # if RDM is availabe, better use np.max(rdm, axis=1)
-        #self.trace.setData(pr)
+        #self.trace0.setData(pr)
         pass
 
     def newRDM(self, rdm:np.ndarray):
-        #print('got RDM')
         imdata = np.fft.fftshift(rdm, axes=1)
         self.img.setImage(imdata)
 
-        #self.trace0.setData(np.max(rdm, axis=1))
-        self.trace0.setData(rdm[:, 0]) # stationary
-        #self.trace1.setData(np.max(rdm[3:58], axis=1)) # moving - does not work well as the doppler window smears targets
+        #self.trace0.setData(np.max(rdm, axis=1)) # strongest targets, any DG
+        self.trace0.setData(rdm[:, 0]) # stationary targets
 
-        # TODO: add background subtraction
         self.newRadarFrame()
 
     def newTargets(self, targets:list[dict]):
