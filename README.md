@@ -84,4 +84,9 @@ Educational display using a PC and a TI xWRx radar evaluation module to show how
 	
 	![Screenshot](docs/Screenshot_2026-04-20_205152.png "Screenshot")
 
-2. Next: Add multiple switchable pages / tabs
+2. Add "map" view of target list with some persistence
+	walking away from radar and back:
+	![Screenshot](docs/Screenshot_2026-04-24_05-50-27.png "Screenshot")
+	
+
+3. Next: Add multiple switchable pages / tabs to separate out the plots
