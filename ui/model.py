@@ -3,7 +3,7 @@ import numpy as np
 from PyQt5 import QtGui, QtCore, QtWidgets 
 from PyQt5.QtCore import QObject
 import pyqtgraph as pg
-from ti_rdm.radar_helper import Radar, RadarResults, RadarTransmissionError
+from radar.radar_helper import Radar, RadarResults, RadarTransmissionError
 
 
 class RadarWorker(QtCore.QObject):
@@ -18,7 +18,7 @@ class RadarWorker(QtCore.QObject):
         radar = Radar(
             com_ctrl='/dev/ttyACM0',  # XDS110 Class Application/User UART
             com_data='/dev/ttyACM1',  # XDS110 Class Auxiliary Data Port
-            waveform_config='ti_rdm/profile_range_doppler.cfg'
+            waveform_config='radar/profile_range_doppler.cfg'
         )
         print('Radar module initialized.')
 

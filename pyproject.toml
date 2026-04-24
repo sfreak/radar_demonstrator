@@ -1,5 +1,5 @@
 [project]
-name = "ti_rdm"
+name = "radar"
 version = "0.1.0"
 description = "My small project"
 

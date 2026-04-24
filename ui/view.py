@@ -2,10 +2,12 @@ import logging
 import numpy as np
 from PyQt5 import QtGui, QtCore, QtWidgets 
 import pyqtgraph as pg
-from pyqtgraph import ImageView, PlotWidget
+from pyqtgraph import PlotWidget
+
 
 # make all plots transparent
 pg.setConfigOption('background', (255,255,255, 0))
+
 
 class PlotRDM(PlotWidget):
     def __init__(self, parent=None, background='default', plotItem=None, **kargs):

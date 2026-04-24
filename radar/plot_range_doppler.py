@@ -2,7 +2,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-from ti_rdm.radar_helper import Radar, RadarResults, RadarTransmissionError
+from radar.radar_helper import Radar, RadarResults, RadarTransmissionError
 
 
 n_range_gates = 128  # do not change - set in profile.cfg

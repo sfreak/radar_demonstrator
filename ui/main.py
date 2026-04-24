@@ -1,8 +1,8 @@
 import sys
 import logging
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QLabel
-from qt.view import PlotRangeProfile, PlotRDM, PlotTargetMap, PlotVelocity
-from qt.model import Controller
+from ui.view import PlotRangeProfile, PlotRDM, PlotTargetMap, PlotVelocity
+from ui.model import Controller
 
 class App(QMainWindow):
     def __init__(self):
