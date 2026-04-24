@@ -16,22 +16,25 @@ class Ui_CustomWidget(object):
     def setupUi(self, CustomWidget):
         CustomWidget.setObjectName("CustomWidget")
         CustomWidget.resize(1024*2, 1180)
+
         self.gridLayout = QtWidgets.QGridLayout(CustomWidget)
         self.gridLayout.setObjectName("gridLayout")
+
         self.plotWidget = PlotWidget(CustomWidget)
         self.plotWidget.setObjectName("plotWidget")
         self.gridLayout.addWidget(self.plotWidget, 0, 0, 1, 1)
-        self.checkBox = QtWidgets.QCheckBox(CustomWidget)
-        self.checkBox.setChecked(True)
-        self.checkBox.setObjectName("checkBox")
-        self.gridLayout.addWidget(self.checkBox, 2, 0, 1, 1)
+
         self.imageWidget = PlotWidget(CustomWidget)
         self.imageWidget.setObjectName("imageWidget")
         self.gridLayout.addWidget(self.imageWidget, 1, 0, 1, 1)
 
+        self.speedWidget = PlotWidget(CustomWidget)
+        self.speedWidget.setObjectName("speedWidget")
+        self.gridLayout.addWidget(self.speedWidget, 2, 0, 1, 1)
+
         self.pointWidget = PlotWidget(CustomWidget)
         self.pointWidget.setObjectName("pointWidget")
-        self.gridLayout.addWidget(self.pointWidget, 0, 1, 2, 1)
+        self.gridLayout.addWidget(self.pointWidget, 0, 1, 3, 1)
 
         self.retranslateUi(CustomWidget)
         QtCore.QMetaObject.connectSlotsByName(CustomWidget)
@@ -39,5 +42,5 @@ class Ui_CustomWidget(object):
     def retranslateUi(self, CustomWidget):
         _translate = QtCore.QCoreApplication.translate
         CustomWidget.setWindowTitle(_translate("CustomWidget", "Form"))
-        self.checkBox.setText(_translate("CustomWidget", "Mouse Enabled"))
+        
 

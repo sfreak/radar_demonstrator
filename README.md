@@ -88,5 +88,6 @@ Educational display using a PC and a TI xWRx radar evaluation module to show how
 	walking away from radar and back:
 	![Screenshot](docs/Screenshot_2026-04-24_05-50-27.png "Screenshot")
 	
+3. Add velocity plot and highscore
 
-3. Next: Add multiple switchable pages / tabs to separate out the plots
+4. TODO: Add multiple switchable pages / tabs to separate out the plots
