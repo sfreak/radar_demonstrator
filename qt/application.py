@@ -23,8 +23,8 @@ class RadarWorker(QtCore.QObject):
         self.please_stop = False
 
         radar = Radar(
-            com_ctrl='COM10',  # XDS110 Class Application/User UART
-            com_data='COM9',  # XDS110 Class Auxiliary Data Port
+            com_ctrl='/dev/ttyACM0',  # XDS110 Class Application/User UART
+            com_data='/dev/ttyACM1',  # XDS110 Class Auxiliary Data Port
             #waveform_config='ti_rdm/profile_range.cfg'
             waveform_config='ti_rdm/profile_range_doppler.cfg'
         )
@@ -51,6 +51,61 @@ class RadarWorker(QtCore.QObject):
 
     def stop(self):
         self.please_stop = True
+
+
+class PointCloudPersistent:
+    _points = []
+    max_age = 100
+
+    def __init__(self):
+        pass
+
+    def addPoint(self, target:dict):
+        if target['dg'] == 0:
+            return
+        pt = {
+            'pos': (target['x'], target['y']),
+            #'size': target['peakval'],
+            #'size': 5,
+            'size': 10*np.log10(target['peakval']),
+            'symbol': 'h',
+            #'pen': {'color': 'b', 'width': 1}, 
+            'pen': None,
+            'age': 0,
+            'dg': target['dg'],
+        }
+        self._points.append(pt)
+
+    def getSpots(self) -> list[dict]:
+        spots = []
+        for pt in self._points:
+            spot = pt.copy()
+            del spot['age']
+            del spot['dg']
+            #spot['brush'] = pg.intColor()
+            alpha = 255 - 2*pt['age']
+            if alpha < 0:
+                continue
+            r = b = 100
+            dg = pt['dg']
+            if dg > 0:
+                r = min(r+10*dg, 255)
+            else:
+                b = max(b-10*dg, 0)
+            spot['brush'] = pg.mkBrush(r, 100, b, alpha)
+            spots.append(spot)
+        return spots
+
+    #def getBrushes(self):
+
+    #    brushes_table = [QtGui.QBrush(QtGui.QColor(*color)) for color in colors]
+
+    def update(self):
+        # some time has passed, fade out the points
+        for pt in self._points:
+            pt['age'] += 1
+            if pt['age'] > self.max_age:
+                del pt
 
 
 class CustomWidget(QtWidgets.QWidget):
@@ -101,6 +156,13 @@ class CustomWidget(QtWidgets.QWidget):
         self.sc = pg.ScatterPlotItem(x=[], y=[])
         self.ui.imageWidget.addItem(self.sc)
 
+        self.pointcloud = PointCloudPersistent()
+        self.sc_points = pg.ScatterPlotItem(x=[], y=[])
+        self.ui.pointWidget.setAspectLocked()
+        self.ui.pointWidget.setYRange(0, 4, padding=0) # botesight
+        self.ui.pointWidget.setXRange(-2, 2, padding=0) # left/right
+        #self.ui.pointWidget.setLimits(xMin=0, xMax=2, yMin=-2, yMax=2)
+        self.ui.pointWidget.addItem(self.sc_points)
 
         # simple demonstration of pure Qt widgets interacting with pyqtgraph
         self.ui.checkBox.stateChanged.connect(self.toggleMouse)
@@ -123,6 +185,14 @@ class CustomWidget(QtWidgets.QWidget):
         self.aboutToQuit.connect(self.worker.stop)
         self.thread.start()
 
+    def newRadarFrame(self):
+        
+        # update persistent point cloud
+        self.pointcloud.update()
+        spots = self.pointcloud.getSpots()
+        logging.info('%d spots', len(spots))
+        self.sc_points.setData(spots=spots)
+
     def newRangeProfile(self, pr:np.ndarray, pn:np.ndarray):
         #print('got radar data: ', pr)
         # ramge profile is just Doppler zero - moving targets will not show up
@@ -140,6 +210,7 @@ class CustomWidget(QtWidgets.QWidget):
         #self.trace1.setData(np.max(rdm[3:58], axis=1)) # moving - does not work well as the doppler window smears targets
 
         # TODO: add background subtraction
+        self.newRadarFrame()
 
     def newTargets(self, targets:list[dict]):
         #x = [t.get('x') for t in targets]
@@ -147,8 +218,9 @@ class CustomWidget(QtWidgets.QWidget):
         x = [t.get('rg') for t in targets]
         y = [t.get('dg') for t in targets]
         self.sc.setData(x=x, y=y)
-        # TODO: add persistence
-        # TODO: move to separate plot
+
+        for tgt in targets:
+            self.pointcloud.addPoint(tgt)
 
     def toggleMouse(self, state):
         if state == QtCore.Qt.Checked:

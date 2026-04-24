@@ -15,7 +15,7 @@ from pyqtgraph import ImageView, PlotWidget
 class Ui_CustomWidget(object):
     def setupUi(self, CustomWidget):
         CustomWidget.setObjectName("CustomWidget")
-        CustomWidget.resize(1024, 1180)
+        CustomWidget.resize(1024*2, 1180)
         self.gridLayout = QtWidgets.QGridLayout(CustomWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.plotWidget = PlotWidget(CustomWidget)
@@ -28,6 +28,10 @@ class Ui_CustomWidget(object):
         self.imageWidget = PlotWidget(CustomWidget)
         self.imageWidget.setObjectName("imageWidget")
         self.gridLayout.addWidget(self.imageWidget, 1, 0, 1, 1)
+
+        self.pointWidget = PlotWidget(CustomWidget)
+        self.pointWidget.setObjectName("pointWidget")
+        self.gridLayout.addWidget(self.pointWidget, 0, 1, 2, 1)
 
         self.retranslateUi(CustomWidget)
         QtCore.QMetaObject.connectSlotsByName(CustomWidget)
