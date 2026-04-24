@@ -65,5 +65,10 @@ Educational display using a PC and a TI xWRx radar evaluation module to show how
 	![Screenshot](docs/Screenshot_2026-04-24_05-50-27.png "Screenshot")
 	
 3. Add velocity plot and highscore
+	![Screenshot](docs/Screenshot_2026-04-24_16-46-24.png "Screenshot")
+	* TODO: convert Doppler gate to m/s
 
 4. Add multiple switchable pages / tabs to separate out the plots
+	![Screenshot](docs/Screenshot_2026-04-24_16-48-19.png "Screenshot")
+	![Screenshot](docs/Screenshot_2026-04-24_16-49-22.png "Screenshot")
+
