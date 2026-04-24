@@ -62,12 +62,10 @@ class PointCloudPersistent:
             return
         pt = {
             'pos': (target['x'], target['y']),
-            #'size': target['peakval'],
-            #'size': 5,
             'size': 10*np.log10(target['peakval']),
             'symbol': 'h',
             #'pen': {'color': 'b', 'width': 1}, 
-            'pen': None,
+            'pen': None, # no border on spots
             'age': 0,
             'dg': target['dg'],
         }
@@ -76,13 +74,10 @@ class PointCloudPersistent:
     def getSpots(self) -> list[dict]:
         spots = []
         for pt in self._points:
-            spot = pt.copy()
-            del spot['age']
-            del spot['dg']
-            #spot['brush'] = pg.intColor()
+            spot = {}
+            for itm in ['pos', 'size', 'symbol', 'pen']:
+                spot[itm] = pt[itm]
             alpha = 255 - 2*pt['age']
-            if alpha < 0:
-                continue
             r = b = 100
             dg = pt['dg']
             if dg > 0:
@@ -166,7 +161,6 @@ class CustomWidget(QtWidgets.QWidget):
         self.ui.pointWidget.setAspectLocked()
         self.ui.pointWidget.setYRange(0, 4, padding=0) # botesight
         self.ui.pointWidget.setXRange(-2, 2, padding=0) # left/right
-        #self.ui.pointWidget.setLimits(xMin=0, xMax=2, yMin=-2, yMax=2)
         self.ui.pointWidget.addItem(self.sc_points)
         self.ui.pointWidget.setLabel('bottom', 'X Position / m')
         self.ui.pointWidget.setLabel('left', 'Y Position / m')
@@ -184,10 +178,6 @@ class CustomWidget(QtWidgets.QWidget):
         self.speed_text = pg.TextItem(html=self.speed_template.format(0))
         self.speed_text.setPos(40,26) # position in data coordinates (i.e., time and speed)
         self.ui.speedWidget.addItem(self.speed_text)
-
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.update)
-        self.timer.start(50)
 
         self.thread = QtCore.QThread()
         self.worker = RadarWorker()
