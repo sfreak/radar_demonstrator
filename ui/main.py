@@ -1,10 +1,41 @@
 import sys
 import logging
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QLabel, QGridLayout
 from ui.view import PlotRangeProfile, PlotRDM, PlotTargetMap, PlotVelocity
 from ui.model import Controller
 
-class App(QMainWindow):
+class AppSingle(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.title = 'Radar Viewer'
+        self.left = 0
+        self.top = 0
+        self.width = 2000
+        self.height = 1000
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        self.gridLayout = QGridLayout(self)
+        self.gridLayout.setObjectName('gridLayout')
+
+        self.tab1 = PlotRangeProfile()
+        self.tab2 = PlotRDM()
+        self.tab3 = PlotTargetMap()
+        self.tab4 = PlotVelocity()
+
+        self.gridLayout.addWidget(self.tab1, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.tab2, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.tab3, 0, 1, 3, 1)
+        self.gridLayout.addWidget(self.tab4, 2, 0, 1, 1)
+
+        self.mainWidget = QWidget()
+        self.mainWidget.setLayout(self.gridLayout)
+
+        self.setCentralWidget(self.mainWidget)
+        self.show()
+
+
+class AppTabs(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'Radar Viewer'
@@ -40,7 +71,9 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     
     ctrl = Controller()
-    ex = App()
+    
+    #ex = AppTabs()
+    ex = AppSingle()
 
     ctrl.newRangeProfile.connect(ex.tab1.newRangeProfile)
     ctrl.newTargets.connect(ex.tab2.newTargets)
