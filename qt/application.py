@@ -256,14 +256,6 @@ class CustomWidget(QtWidgets.QWidget):
         for tgt in targets:
             self.pointcloud.addPoint(tgt)
 
-    def toggleMouse(self, state):
-        if state == QtCore.Qt.Checked:
-            enabled = True
-        else:
-            enabled = False
-
-        self.ui.plotWidget.setMouseEnabled(x=enabled, y=enabled)
-
 
 if __name__ == '__main__':
 
