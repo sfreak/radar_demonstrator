@@ -54,7 +54,7 @@ class Radar:
 
         self.ser_ctrl.write(b'sensorStart\n')
         response = self.ser_ctrl.read(1024)
-        print(response.decode(), end='')
+        print(response.decode(errors='replace'), end='')
         
     def _send_config(self, configfile):
         """Transmits config file to AWR1642BOOST via CLI interface to setup chirps etc.
@@ -68,7 +68,7 @@ class Radar:
         print()
         print("Chirp configuration:")
         response = self.ser_ctrl.read(1024)
-        print(response.decode(), end='')
+        print(response.decode(errors='replace'), end='')
         for l in config:
             line = l.strip()
             if line.startswith(b'%'): continue
@@ -76,10 +76,10 @@ class Radar:
             echo = self.ser_ctrl.readline()
             response = self.ser_ctrl.readline()
             time.sleep(0.001)
-            print(echo.decode(), end='')
-            print(response.decode(), end='')
+            print(echo.decode(errors='replace'), end='')
+            print(response.decode(errors='replace'), end='')
             if b'Done' not in response:
-                raise Exception('Radar sensor reported error:' + response.decode())
+                raise Exception('Radar sensor reported error:' + response.decode(errors='replace'))
         print()
         print()
 
