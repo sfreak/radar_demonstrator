@@ -7,7 +7,7 @@ from pyqtgraph import PlotWidget
 
 # make all plots transparent
 pg.setConfigOption('background', (255,255,255, 0))
-
+pg.setConfigOption('foreground', 'k')
 
 class PlotRDM(PlotWidget):
     def __init__(self, parent=None, background='default', plotItem=None, **kargs):

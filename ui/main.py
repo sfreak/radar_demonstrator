@@ -72,8 +72,10 @@ if __name__ == '__main__':
     
     ctrl = Controller()
     
-    #ex = AppTabs()
-    ex = AppSingle()
+    if '--tabs' in sys.argv:
+        ex = AppTabs()
+    else:
+        ex = AppSingle()
 
     ctrl.newRangeProfile.connect(ex.tab1.newRangeProfile)
     ctrl.newTargets.connect(ex.tab2.newTargets)
