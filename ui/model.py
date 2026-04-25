@@ -4,6 +4,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 import pyqtgraph as pg
 from radar.radar_helper import Radar, RadarResults, RadarTransmissionError
+from radar.parse_config import parse_config
 
 
 class RadarWorker(QtCore.QObject):
@@ -11,14 +12,20 @@ class RadarWorker(QtCore.QObject):
     newRangeProfile = QtCore.pyqtSignal(np.ndarray, np.ndarray)
     newRDM = QtCore.pyqtSignal(np.ndarray)
     newTargets = QtCore.pyqtSignal(list)
+
+    def __init__(self, com_ctrl:str, com_data:str, waveform_file:str, parent = None):
+        super().__init__(parent)
+        self.com_ctrl = com_ctrl
+        self.com_data = com_data
+        self.waveform_file = waveform_file
     
     def run(self):
         self.please_stop = False
 
         radar = Radar(
-            com_ctrl='/dev/ttyACM0',  # XDS110 Class Application/User UART
-            com_data='/dev/ttyACM1',  # XDS110 Class Auxiliary Data Port
-            waveform_config='radar/profile_range_doppler.cfg'
+            com_ctrl=self.com_ctrl,
+            com_data=self.com_data,
+            waveform_config=self.waveform_file
         )
         print('Radar module initialized.')
 
@@ -116,14 +123,23 @@ class Controller(QObject):
     newSpeeds = QtCore.pyqtSignal(np.ndarray, np.ndarray)
     newRadarFrame = QtCore.pyqtSignal()
 
+    # radar config and interface config
+    # TODO: should be read from command line
+    com_ctrl='/dev/ttyACM0'  # XDS110 Class Application/User UART
+    com_data='/dev/ttyACM1'  # XDS110 Class Auxiliary Data Port
+    waveform_config='radar/profile_range_doppler.cfg'
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.speeds = SpeedHistory(100)
         self.pointcloud = PointCloudPersistent()
 
+        self.wf = parse_config(self.waveform_config)
+        logging.info(self.wf)
+
         self.thread = QtCore.QThread()
-        self.worker = RadarWorker()
+        self.worker = RadarWorker(com_ctrl=self.com_ctrl, com_data=self.com_data, waveform_file=self.waveform_config)
         self.worker.moveToThread(self.thread)
 
         self.thread.started.connect(self.worker.run)

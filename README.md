@@ -61,7 +61,8 @@ QT_SCALE_FACTOR=2 python ui/main.py --tabs
 
     <img src="docs/Screenshot_2026-04-25_07-42-03.png" width="30%" />
 
-6. Convert Doppler gates to actual velocities in m/s (TODO)
+6. Convert Doppler gates to actual velocities in m/s, Range gates to meters (TODO)
+    * remove hardcoded values from plot classes (e.g., dimension of radnge-doppler heatmap)
 
 ## Ideas
 
@@ -106,10 +107,12 @@ QT_SCALE_FACTOR=2 python ui/main.py --tabs
     * ~~Range-Doppler map (easy)~~ &#x2713;
 	* Angle spectrum of single target (medium; how to select target of interest?)
 	* Range-Azimuth map (easy if available from sensor)
-	* ~~Tracks of people moving? (high implementation effort)~~ -> point cloud with persistance; &#x2713;
+	* ~~Tracks of people moving? (high implementation effort)~~ -> point cloud with persistence as low-effort workaround &#x2713;
 
 * Implementation
     * visualization on mini PC w/ full Linux distribution (Lenovo M92p tiny)
+		* might also run on RasPi
+		* used mini PCs are much cheaper than RasPis 
 	* Data collection and processing in Python
 	* GUI: PyQT + pyqtgraph
 	
