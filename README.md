@@ -2,7 +2,7 @@
 Educational display using a PC and a TI xWRx radar evaluation module to show how radar perceives the world.
 
 * [Usage](#usage) 
-* [Status](status) 
+* [Status](#status) 
 * [Ideas](#ideas) 
 
 ## Usage
