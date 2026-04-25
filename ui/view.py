@@ -91,14 +91,15 @@ class PlotVelocity(PlotWidget):
         self.setLabel('bottom', 'Time / s')
         self.setLabel('left', '|Radial Speed| / m/s')
         # highscore
-        self.speed_template = '<span style="color: red; font-size: 16pt;">Highest radial speed: {: 4.1f} m/s</span>'
-        self.speed_text = pg.TextItem(html=self.speed_template.format(0))
-        self.speed_text.setPos(-18,4) # position in data coordinates (i.e., time and speed), FIXME
-        self.addItem(self.speed_text)
+        # https://stackoverflow.com/a/70200326
+        self.speed_template = 'Highest radial speed: {: 4.1f} m/s'
+        self.speed_text = pg.LabelItem("Error", size="16pt", color="red")
+        self.speed_text.setParentItem(self.getPlotItem())
+        self.speed_text.anchor(itemPos=(0.5,0.5), parentPos=(0.5,0.2), offset=(0,0))
 
     def newSpeeds(self, t:list, v:list):
         self.speed_trace.setData(x=t, y=v)
-        self.speed_text.setHtml(self.speed_template.format(np.max(v)))
+        self.speed_text.setText(self.speed_template.format(np.max(v)))
 
 
 class PlotTargetMap(PlotWidget):
