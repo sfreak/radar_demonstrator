@@ -10,6 +10,12 @@
 import math
 from dataclasses import dataclass
 
+@dataclass
+class WaveformFOV:
+    x_min: float
+    x_max: float
+    y_min: float
+    y_max: float
 
 @dataclass
 class Waveform:
@@ -19,6 +25,7 @@ class Waveform:
     d_range: float
     d_speed: float
     t_frame: float
+    fov: WaveformFOV
 
 
 def nextpow2(x):
@@ -45,6 +52,15 @@ def parse_config(cfg_name:str):
     n_loops = float(frame[3])
     n_frames = float(frame[4])
     t_frame = float(frame[5]) * 1e-3
+
+    # SDK1.2 has no FOV config, so use custom lines
+    fov_x = [line.split() for line in cfg if 'fov_x' in line][0]
+    fov_x_min = float(fov_x[1])
+    fov_x_max = float(fov_x[2])
+    fov_y = [line.split() for line in cfg if 'fov_y' in line][0]
+    fov_y_min = float(fov_y[1])
+    fov_y_max = float(fov_y[2])
+    fov = WaveformFOV(fov_x_min, fov_x_max, fov_y_min, fov_y_max)
 
     n_chirptypes = i_chirp_end - i_chirp_start + 1
     t_sample = n_samples / f_sample
@@ -80,6 +96,7 @@ def parse_config(cfg_name:str):
         d_range = d_range,
         d_speed = d_speed,
         t_frame = t_frame,
+        fov = fov
     )
 
     

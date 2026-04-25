@@ -109,8 +109,8 @@ class PlotTargetMap(PlotWidget):
         # persistent point cloud
         self.sc_points = pg.ScatterPlotItem(x=[], y=[])
         self.setAspectLocked()
-        self.setYRange(0, 4, padding=0) # boresight, FIXME
-        self.setXRange(-2, 2, padding=0) # left/right, FIXME
+        self.setYRange(waveform.fov.x_min, waveform.fov.x_max) # boresight
+        self.setXRange(waveform.fov.y_min, waveform.fov.y_max) # left/right
         self.addItem(self.sc_points)
         self.setLabel('bottom', 'X Position / m')
         self.setLabel('left', 'Y Position / m')
