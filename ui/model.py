@@ -4,7 +4,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 import pyqtgraph as pg
 from radar.radar_helper import Radar, RadarResults, RadarTransmissionError
-from radar.parse_config import parse_config
+from radar.parse_config import parse_config, Waveform
 
 
 class RadarWorker(QtCore.QObject):
@@ -99,9 +99,9 @@ class PointCloudPersistent:
                 del pt
 
 class SpeedHistory:
-    def __init__(self, n_frames=100):
+    def __init__(self, n_frames=100, t_frame=0.2):
         self._speeds = [0] * n_frames
-        self._t = np.arange(n_frames)
+        self._t = np.arange(-n_frames, 0) * t_frame
 
     def addSpeed(self, v):
         self._speeds = self._speeds[1:]
@@ -132,11 +132,11 @@ class Controller(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.speeds = SpeedHistory(100)
-        self.pointcloud = PointCloudPersistent()
-
         self.wf = parse_config(self.waveform_config)
         logging.info(self.wf)
+
+        self.speeds = SpeedHistory(100, self.wf.t_frame)
+        self.pointcloud = PointCloudPersistent()
 
         self.thread = QtCore.QThread()
         self.worker = RadarWorker(com_ctrl=self.com_ctrl, com_data=self.com_data, waveform_file=self.waveform_config)
@@ -174,9 +174,13 @@ class Controller(QObject):
         rg = [t.get('rg') for t in targets]
         dg = [t.get('dg') for t in targets]
         max_dg = np.max(np.abs(dg))
-        self.speeds.addSpeed(max_dg) # FIXME: convert to m/s
+        max_v = max_dg * self.wf.d_speed
+        self.speeds.addSpeed(max_v)
         t, v = self.speeds.getSpeeds()
         self.newSpeeds.emit(np.array(t), np.array(v))
         
         # pass on to plot widgets
         self.newTargets.emit(targets)
+
+    def getWaveform(self) -> Waveform:
+        return self.wf

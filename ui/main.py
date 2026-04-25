@@ -3,9 +3,11 @@ import logging
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QLabel, QGridLayout
 from ui.view import PlotRangeProfile, PlotRDM, PlotTargetMap, PlotVelocity
 from ui.model import Controller
+from radar.parse_config import Waveform
+
 
 class AppSingle(QMainWindow):
-    def __init__(self):
+    def __init__(self, waveform:Waveform):
         super().__init__()
         self.title = 'Radar Viewer'
         self.left = 0
@@ -18,10 +20,10 @@ class AppSingle(QMainWindow):
         self.gridLayout = QGridLayout(self)
         self.gridLayout.setObjectName('gridLayout')
 
-        self.tab1 = PlotRangeProfile()
-        self.tab2 = PlotRDM()
-        self.tab3 = PlotTargetMap()
-        self.tab4 = PlotVelocity()
+        self.tab1 = PlotRangeProfile(waveform=waveform)
+        self.tab2 = PlotRDM(waveform=waveform)
+        self.tab3 = PlotTargetMap(waveform=waveform)
+        self.tab4 = PlotVelocity(waveform=waveform)
 
         self.gridLayout.addWidget(self.tab1, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.tab2, 1, 0, 1, 1)
@@ -36,7 +38,7 @@ class AppSingle(QMainWindow):
 
 
 class AppTabs(QMainWindow):
-    def __init__(self):
+    def __init__(self, waveform:Waveform):
         super().__init__()
         self.title = 'Radar Viewer'
         self.left = 0
@@ -48,10 +50,10 @@ class AppTabs(QMainWindow):
 
         self.tab_widget = QTabWidget(self)
 
-        self.tab1 = PlotRangeProfile()
-        self.tab2 = PlotRDM()
-        self.tab3 = PlotTargetMap()
-        self.tab4 = PlotVelocity()
+        self.tab1 = PlotRangeProfile(waveform=waveform)
+        self.tab2 = PlotRDM(waveform=waveform)
+        self.tab3 = PlotTargetMap(waveform=waveform)
+        self.tab4 = PlotVelocity(waveform=waveform)
 
         self.tab_widget.addTab(self.tab1, "Range Profile")
         self.tab_widget.addTab(self.tab2, "Range-Doppler Heatmap")
@@ -71,11 +73,12 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     
     ctrl = Controller()
+    wf = ctrl.getWaveform()
     
     if '--tabs' in sys.argv:
-        ex = AppTabs()
+        ex = AppTabs(wf)
     else:
-        ex = AppSingle()
+        ex = AppSingle(wf)
 
     ctrl.newRangeProfile.connect(ex.tab1.newRangeProfile)
     ctrl.newTargets.connect(ex.tab2.newTargets)
