@@ -24,11 +24,11 @@ class AppOne(QMainWindow):
 
         self.tab1 = PlotRangeProfile(waveform=waveform)
         self.tab2 = PlotRDM(waveform=waveform)
-        self.tab3 = PlotVelocity(waveform=waveform)
+        #self.tab3 = PlotVelocity(waveform=waveform)
 
         self.gridLayout.addWidget(self.tab1, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.tab2, 1, 0, 1, 1)
-        self.gridLayout.addWidget(self.tab3, 2, 0, 1, 1)
+        #self.gridLayout.addWidget(self.tab3, 2, 0, 1, 1)
 
         self.mainWidget = QWidget()
         self.mainWidget.setLayout(self.gridLayout)
@@ -82,11 +82,12 @@ if __name__ == '__main__':
     ex1 = AppOne(wf)
     ex2 = AppTwo(wf)
 
-    # screen 1
+    # first screen
     monitor = QDesktopWidget().screenGeometry(0)
     ex1.move(monitor.left(), monitor.top())
     ex1.showFullScreen()
 
+    # second screen
     monitor = QDesktopWidget().screenGeometry(1)
     ex2.move(monitor.left(), monitor.top())
     ex2.showFullScreen()
@@ -94,7 +95,7 @@ if __name__ == '__main__':
     ctrl.newRangeProfile.connect(ex1.tab1.newRangeProfile)
     ctrl.newTargets.connect(ex1.tab2.newTargets)
     ctrl.newRDM.connect(ex1.tab2.newRDM)
-    ctrl.newSpeeds.connect(ex1.tab3.newSpeeds)
+    #ctrl.newSpeeds.connect(ex1.tab3.newSpeeds)
 
     ctrl.newPointCloud.connect(ex2.tab1.newPointCloud)
 

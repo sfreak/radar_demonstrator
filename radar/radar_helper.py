@@ -41,7 +41,7 @@ class Radar:
         self.ser_ctrl = serial.Serial(port=com_ctrl, baudrate=115200, timeout=0.1)
 
         if reset:
-            os.system(r'C:\ti\ccs1271\ccs\ccs_base\common\uscif\xds110\xds110reset.exe')
+            os.system('~/ti/ccs_base/common/uscif/xds110/xds110reset')
 
         if send_config:
             self._send_config(waveform_config)
