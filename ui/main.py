@@ -1,5 +1,7 @@
 import sys
 import logging
+import signal
+import PyQt5
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QLabel, QGridLayout
 from ui.view import PlotRangeProfile, PlotRDM, PlotTargetMap, PlotVelocity
 from ui.model import Controller
@@ -34,7 +36,7 @@ class AppSingle(QMainWindow):
         self.mainWidget.setLayout(self.gridLayout)
 
         self.setCentralWidget(self.mainWidget)
-        self.show()
+        self.showFullScreen()
 
 
 class AppTabs(QMainWindow):
@@ -64,6 +66,11 @@ class AppTabs(QMainWindow):
         self.show()
 
 
+def sigint_handler(signum, frame):
+    '''Ask app to close if Ctrl+C is pressed.'''
+    QApplication.quit()
+    
+
 if __name__ == '__main__':
 
     logging.basicConfig(level=logging.DEBUG, filename='debug.log', filemode='w')
@@ -71,6 +78,8 @@ if __name__ == '__main__':
     logging.getLogger('PIL').setLevel(logging.WARNING)
 
     app = QApplication(sys.argv)
+
+    signal.signal(signal.SIGINT, sigint_handler)
     
     ctrl = Controller()
     wf = ctrl.getWaveform()
