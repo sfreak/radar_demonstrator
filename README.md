@@ -2,12 +2,13 @@
 Educational display using a PC and a TI xWRx radar evaluation module to show how radar perceives the world.
 
 * [Usage](#usage) 
+* [Prerequisites](#prerequisites)
 * [Status](#status) 
 * [Ideas](#ideas) 
 
 ## Usage
 
-Python interpreter: Install the dependencies from requirements.txt, preferrably into a virtual environment. Ubuntu 24.04 with Python 3.12 was used for development. Python 3.14 also appeared to work. Check that Qt5 packages are available for the Python version of your choice. 
+Python interpreter: Install the dependencies from requirements.txt, preferrably into a virtual environment. Ubuntu 26.04 with Python 3.14 was used for development. Check that PyQt5 packages are available for the Python version of your choice. 
 
 ```bash
 python -m venv .venv
@@ -29,6 +30,13 @@ The easiest way to get larger labels for better readability in a kiosk-type disp
 ```bash
 QT_SCALE_FACTOR=2 python ui/main.py --tabs
 ```
+
+## Prerequisites
+
+* Tested on Ubuntu 26.04 LTS
+    * Python 3.14
+	* install qtwayland5, otherwise you will get strage error message trying to start Qt apps
+* Install TI EMUPack or CCS to get the xds110reset utility to perform hardreset on radar chip
 
 ## Status
 
