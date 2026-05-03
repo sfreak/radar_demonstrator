@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Tested on Ubuntu 26.04 LTS
+#
+# see https://github.com/dwagelaar/enforce-dpms/blob/main/enforce-dpms.sh
+#
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --on) on=1 ;;
+        --off) on=0 ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+if [[ $on -eq 1 ]]; then
+    busctl --user set-property org.gnome.Mutter.DisplayConfig /org/gnome/Mutter/DisplayConfig org.gnome.Mutter.DisplayConfig PowerSaveMode i 0
+else
+    busctl --user set-property org.gnome.Mutter.DisplayConfig /org/gnome/Mutter/DisplayConfig org.gnome.Mutter.DisplayConfig PowerSaveMode i 3
+fi
