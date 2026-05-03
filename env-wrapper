@@ -1,0 +1,7 @@
+# allow starting GUI apps from ssh session in Ubuntu 26
+#!/bin/bash
+set -o allexport
+XDG_RUNTIME_DIR="/run/user/$(id -u)"
+eval "$(systemctl --user show-environment)"
+exec "$@"
+
